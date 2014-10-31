@@ -5,7 +5,7 @@ var postal = "";
 var prevTime = '0';
 
 
-
+/*
 var test1 =
 [
 {time:"01",comment:"一個目"},
@@ -44,7 +44,7 @@ test3 =
 {time:"11",comment:"十一個め"},
 {time:"12",comment:"銃に米"}
 ];
-
+*/
 $(function(){
 	var obj = {
 	//基本情報が設定できます
@@ -81,9 +81,9 @@ function drawComment(data){
 
 // 1秒ごとに実行
 window.setInterval(function() {
-	drawComment(test1);	//test
+/*	drawComment(test1);	//test
 	test1 = test2;		//test
-/*
+*/
 	// コメントの取得
 	$.ajax({
 		url: endpoint + "/getComment",
@@ -94,7 +94,7 @@ window.setInterval(function() {
 			showError(error.message);
 		}
 	});
-	*/
+
 }, 1000);
 
 

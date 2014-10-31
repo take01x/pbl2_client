@@ -23,13 +23,14 @@ $('#slide_next').click(function(){
 	});
 
 });
+/*
 var test = "http://image.slidesharecdn.com/110103quotes2010-12-110103073149-phpapp01/95/business-quotes-for-2011-4-728.jpg?cb=1294126271";
-
+*/
 // 1秒ごとに実行
 window.setInterval(function() {
-
-$('#slide').attr("src", test);
 /*
+$('#slide').attr("src", test);
+*/
 	//スライドの更新
 	$.ajax({
 		url: endpoint + "/getSlide",
@@ -41,7 +42,7 @@ $('#slide').attr("src", test);
 			showError(error.message);
 		}
 	});
-	*/
+
 }, 4000);
 
 // エラー表示関数
