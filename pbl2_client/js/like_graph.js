@@ -1,17 +1,18 @@
 //var endpoint = 'http://192.168.100.10:8080/alpaca_c0/api';
-var endpoint = 'http://localhost:8080/alpaca/api';
+//var endpoint = 'http://localhost:8080/alpaca/api';
+var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
 
 google.load("visualization", "1", {packages:["corechart"]});
 
 var intervalId = window.setInterval(function() {
 	$.ajax({
 		type : 'GET',
-		url : endpoint + '/getLike',
+		url : endpoint + '/report',
 		success : function(xml) {
 
 			$('#like_graph').empty();
 			var len = $('like', xml).size();
-			var elem = $('like', xml).find('likeCount');	// ここらへん曖昧なのでサーバーできてから改める
+			var elem = $('like', xml).find('likeCount');
 			var time = $('like', xml).find('date');
 
 			// 原点は取得した最初のデータの1分前
@@ -47,7 +48,7 @@ var intervalId = window.setInterval(function() {
 			var chart = new google.visualization.LineChart(document.getElementById('like_graph'));
 			chart.draw(data, options);
 
-			$('#total').text(array[array.length-1][1]);
+			$('#total').text($('total_like', xml).text());
 		}
 	});
 }, 1000);
