@@ -1,11 +1,14 @@
 //var endpoint = 'http://192.168.100.10:8080/alpaca_c0/api';
-var endpoint = 'http://localhost:8080/alpaca/api';
-//var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
+//var endpoint = 'http://localhost:8080/alpaca/api';
+var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
+
 
 google.load("visualization", "1", {packages:["corechart"]});
-google.setOnLoadCallback(test);
 
-var SEC_INTERVAL = 10;	// 何秒間隔にするか
+//google.setOnLoadCallback(initialize);
+
+var SEC_INTERVAL = 1;	// 何秒間隔にするか
+var start_offset = 10;	// 最古のlike時刻の何秒前を原点とするか
 
 /*
  * 発表開始・終了時刻が不明なので,
@@ -15,8 +18,17 @@ var SEC_INTERVAL = 10;	// 何秒間隔にするか
  */
 var originDate = getCurrentDate();
 
-function test(){
-//var intervalId = window.setInterval(function() {
+var intervalId = window.setInterval(function() {
+
+	/* ライブラリ読み込み待ち */
+	if(typeof google.visualization === "undefined") {
+		console.log('laoding google.visualization...');
+		return;
+	} else if(typeof google.visualization.arrayToDataTable === "undefined") {
+		console.log('laoding google.visualization.arrayToDataTable...');
+		return;
+	}
+
 	$.ajax({
 		type : 'GET',
 		url : endpoint + '/report',
@@ -34,19 +46,12 @@ function test(){
 			/* 原点の設定 */
 			var oldest = newDate(dates.eq(0).text());	// 先頭(最古)のlike時刻
 			if(compareDate(originDate,oldest) > 0) {
-				originDate = addDate(oldest, -SEC_INTERVAL, 's');
+				originDate = addDate(oldest, -SEC_INTERVAL*start_offset, 's');
 			}
 			array[array.length] = [originDate, 0];
 
 			var currDate = getCurrentDate();
 			var sec_num = (currDate.getTime() - originDate.getTime()) / (1000 * SEC_INTERVAL);
-
-			/* データ数が多すぎると止まるので上限. 普通はここまで多くならないが,  */
-			var interval = SEC_INTERVAL;
-			if(sec_num > 10) {
-				sec_num = 10;
-				interval = Math.floor((currDate.getTime() - originDate.getTime()) / (1000 * sec_num));
-			}
 
 			/* データ格納 */
 			var tempDate = newDate(originDate);
@@ -54,31 +59,29 @@ function test(){
 			var likeCnt = 0;
 			var i = 0;
 
-			console.log(new Date('2014/11/5 13:00:120048'));
-			console.log('sec_num:' + sec_num +' len:' + len + "iv: " + interval);
-
-			while(i < sec_num && i < len) {
+			while(i < len) {
 				var dbDate = newDate(dates.eq(i).text());
 
-				if(compareDate(tempDate, dbDate) == 0) {
+				if(compareDate(tempDate, dbDate) >= 0) {
 					likeCnt++;
 					i++;
 				} else {
 					array[array.length] = [tempDate, likeCnt];
-					tempDate = addDate(tempDate, interval, 's');
+					tempDate = addDate(tempDate, SEC_INTERVAL, 's');
 				}
 			}
 
 			/* データが足りなければ穴埋め */
 			if(array.length < (sec_num+2)) {
-				for(var i = array.length; i < sec_num; i++) {
+				for(var i = array.length; i < (sec_num+2); i++) {
 					array[array.length] = [tempDate, likeCnt];
-					tempDate = addDate(tempDate, interval, 's');
+					tempDate = addDate(tempDate, SEC_INTERVAL, 's');
 				}
 			}
 
 			var data = google.visualization.arrayToDataTable(array);
 
+			/*
 			var dateCount = (array[array.length-1][0].getTime() - array[1][0].getTime())/(1000*SEC_INTERVAL);
 			var hAxisGridCount = 7;
 			if(dateCount < 2) {
@@ -86,11 +89,13 @@ function test(){
 			} else if(dateCount < 7) {
 				hAxisGridCount = dateCount;
 			}
+			*/
 
 			var options = {
 				title: 'Like Graph',
 				legend: {position: 'none'},
-				hAxis: {format: 'hh:mm:ss', gridlines: {count: Number(hAxisGridCount)}},
+				//hAxis: {format: 'hh:mm:ss', gridlines: {count: Number(hAxisGridCount)}},
+				//hAxis: {gridlines: {count: Number(hAxisGridCount)}},
 				vAxis: {viewWindow: {min: 0}, gridlines: {count: 5}}
 			};
 
@@ -100,7 +105,74 @@ function test(){
 			$('#total').text($('total_like', xml).text());
 		}
 	});
-//}, 1000 * SEC_INTERVAL);
+}, 100);
+
+
+
+function initialize() {
+	$.ajax({
+		type : 'GET',
+		url : endpoint + '/report',
+		success : function(xml) {
+
+			$('#like_graph').empty();	// 描画中のグラフを削除
+
+			var len = $('like', xml).size();	// like のデータ数 = total_like となるはず
+			var dates = $('like', xml).find('date');
+
+			var array = new Array();
+			array[array.length] = ['Date', 'Like'];		// データラベル
+
+			/* 原点の設定 */
+			var oldest = newDate(dates.eq(0).text());	// 先頭(最古)のlike時刻
+			if(compareDate(originDate,oldest) > 0) {
+				originDate = addDate(oldest, -SEC_INTERVAL*start_offset, 's');
+			}
+			array[array.length] = [originDate, 0];
+
+			var currDate = getCurrentDate();
+			var sec_num = (currDate.getTime() - originDate.getTime()) / (1000 * SEC_INTERVAL);
+
+			/* データ格納 */
+			var tempDate = newDate(originDate);
+			tempDate = addDate(tempDate, SEC_INTERVAL, 's');
+			var likeCnt = 0;
+			var i = 0;
+
+			while(i < len) {
+				var dbDate = newDate(dates.eq(i).text());
+
+				if(compareDate(tempDate, dbDate) >= 0) {
+					likeCnt++;
+					i++;
+				} else {
+					array[array.length] = [tempDate, likeCnt];
+					tempDate = addDate(tempDate, SEC_INTERVAL, 's');
+				}
+			}
+
+			/* データが足りなければ穴埋め */
+			if(array.length < (sec_num+2)) {
+				for(var i = array.length; i < sec_num; i++) {
+					array[array.length] = [tempDate, likeCnt];
+					tempDate = addDate(tempDate, SEC_INTERVAL, 's');
+				}
+			}
+
+			var data = google.visualization.arrayToDataTable(array);
+
+			var options = {
+				title: 'Like Graph',
+				legend: {position: 'none'},
+				vAxis: {viewWindow: {min: 0}, gridlines: {count: 5}}
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById('like_graph'));
+			chart.draw(data, options);
+
+			$('#total').text($('total_like', xml).text());
+		}
+	});
 }
 
 function addDate(date, offset, type) {
@@ -111,29 +183,31 @@ function addDate(date, offset, type) {
 	var min = date.getMinutes();
 	var sec = date.getSeconds();
 
+	var nd = new Date(date);
+
 	switch(type) {
 	case 'Y':
-		y += offset;
+		nd.setFullYear(y + offset);
 		break;
 
 	case 'M':
-		m += offset;
+		nd.setMonth(m + offset);
 		break;
 
 	case 'D':
-		d += offset;
+		nd.setDate(d + offset);
 		break;
 
 	case 'h':
-		h += offset;
+		nd.setHours(h + offset);
 		break;
 
 	case 'm':
-		min += offset;
+		nd.setMinutes(min + offset);
 		break;
 
 	case 's':
-		sec += offset;
+		nd.setSeconds(sec + offset);
 		break;
 
 	default:
@@ -141,8 +215,7 @@ function addDate(date, offset, type) {
 		break;
 	}
 
-	var dateStr = y + '/' + m + '/' + d + ' ' + h + ':' + min + ':' + sec;
-	return new Date(dateStr);
+	return nd;
 }
 
 
