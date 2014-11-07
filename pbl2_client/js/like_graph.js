@@ -1,5 +1,5 @@
-var endpoint = 'http://localhost:8080/alpaca/api';
-//var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
+//var endpoint = 'http://localhost:8080/alpaca/api';
+var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
 
 google.load("visualization", "1", {packages:["corechart"]});
 
