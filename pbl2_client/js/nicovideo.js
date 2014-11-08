@@ -4,7 +4,6 @@ var postal = "";
 
 var prevTime = '0';
 
-
 /*
 var test1 =
 [
@@ -68,11 +67,11 @@ function drawComment(data){
 	var tempmaxtime = prevTime;
 
 	for(i = 0 ; i < data.length;i++){
-		if(prevTime < data[i]['time']){
-			nicoscreen.add(data[i]['comment']);
+		if(prevTime < data[i]['date']){
+			nicoscreen.add(data[i]['message']);
 		}
-		if(tempmaxtime < data[i]['time']){
-			tempmaxtime = data[i]['time'];
+		if(tempmaxtime < data[i]['date']){
+			tempmaxtime = data[i]['date'];
 		}
 	};
 	prevTime = tempmaxtime;
@@ -87,8 +86,13 @@ window.setInterval(function() {
 	// コメントの取得
 	$.ajax({
 		url: endpoint + "/getComment",
+        dataType: 'json',
+        accepts: {
+            xml: 'text/xml',
+            text: 'text/plain'
+        },
 		success: function(data) {
-			drawComment(data);
+			drawComment(data['comment']);
 		},
 		error: function(xhr, status, error) {
 			showError(error.message);
