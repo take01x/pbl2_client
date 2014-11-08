@@ -53,13 +53,12 @@ var intervalId = window.setInterval(function() {
 			var interval = SEC_INTERVAL;
 
 			// グラフデータ数の上限. 以降は時間間隔の方が変化する.
-			/*
-			var MAX_DIVIDE = 30;
+			var MAX_DIVIDE = 1000;
 			if(sec_num > MAX_DIVIDE) {
 				sec_num = MAX_DIVIDE;
 				interval = Math.ceil((currDate.getTime() - originDate.getTime()) / (sec_num * 1000));
 			}
-			*/
+
 
 			// データ格納
 			var tempDate = newDate(originDate);
