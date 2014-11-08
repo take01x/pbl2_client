@@ -4,46 +4,6 @@ var postal = "";
 
 var prevTime = '0';
 
-/*
-var test1 =
-[
-{time:"01",comment:"一個目"},
-{time:"02",comment:"煮込め"},
-{time:"03",comment:"三個目"},
-{time:"04",comment:"四個目"},
-{time:"05",comment:"語米"},
-];
-test2 =
-[
-{time:"01",comment:"一個目"},
-{time:"02",comment:"煮込め"},
-{time:"03",comment:"三個目"},
-{time:"04",comment:"四個目"},
-{time:"05",comment:"語米"},
-{time:"06",comment:"六個目"},
-{time:"07",comment:"七個目"},
-{time:"08",comment:"八個目"},
-{time:"09",comment:"急米"},
-{time:"10",comment:"十個目"},
-{time:"11",comment:"十一個め"},
-{time:"12",comment:"銃に米"}
-];
-test3 =
-[
-{time:"01",comment:"一個目"},
-{time:"02",comment:"煮込め"},
-{time:"03",comment:"三個目"},
-{time:"04",comment:"四個目"},
-{time:"05",comment:"語米"},
-{time:"06",comment:"六個目"},
-{time:"07",comment:"七個目"},
-{time:"08",comment:"八個目"},
-{time:"09",comment:"急米"},
-{time:"10",comment:"十個目"},
-{time:"11",comment:"十一個め"},
-{time:"12",comment:"銃に米"}
-];
-*/
 $(function(){
 	var obj = {
 	//基本情報が設定できます
@@ -60,16 +20,36 @@ $(function(){
 	};
 	nicoscreen.set(obj);
 	nicoscreen.start();
+	var now	= new Date();
+	var y	= now.getFullYear();
+	var m	= now.getMonth()+1;
+	if(m<10){m="0"+m;}
+	var d	= now.getDate();
+	if(d<10){d="0"+d;}
+	var w	= now.getDay();
+	var hr	= now.getHours();
+	if(hr<10){hr="0"+hr;}
+	var min	= now.getMinutes();
+	if(min<10){min="0"+min;}
+	var sec	= now.getSeconds();
+	if(sec<10){sec="0"+sec;}
+	var msec= now.getMilliseconds();
+	var temp= y+"-"+m+"-"+d+"T"+hr+":"+min+":"+sec+"."+"000+0900";
+	prevTime = temp;
+
 });
 
 
 function drawComment(data){
 	var tempmaxtime = prevTime;
-
 	for(i = 0 ; i < data.length;i++){
 		if(prevTime < data[i]['date']){
 			nicoscreen.add(data[i]['message']);
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> features-slide-new
 		if(tempmaxtime < data[i]['date']){
 			tempmaxtime = data[i]['date'];
 		}
