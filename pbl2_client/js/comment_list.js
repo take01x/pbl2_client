@@ -4,7 +4,7 @@ var endpoint = 'http://cloudspiral8.ddns.net/vicugna/api';
 var l = window.setInterval(function() {
 	$.ajax({
 		type : 'GET',
-		url : endpoint + '/report',
+		url : endpoint + '/getComment',
 		success : function(xml) {
 
 			$('#board').empty();
