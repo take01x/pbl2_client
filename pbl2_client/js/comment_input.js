@@ -8,4 +8,5 @@ $('#submit').click(function() {
 			msg : message
 		}
 	});
+    $('#message').val("")
 });
