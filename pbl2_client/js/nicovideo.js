@@ -46,10 +46,6 @@ function drawComment(data){
 		if(prevTime < data[i]['date']){
 			nicoscreen.add(data[i]['message']);
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> features-slide-new
 		if(tempmaxtime < data[i]['date']){
 			tempmaxtime = data[i]['date'];
 		}
