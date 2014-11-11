@@ -27,23 +27,28 @@ $('#slide_next').click(function(){
 var test = "http://image.slidesharecdn.com/110103quotes2010-12-110103073149-phpapp01/95/business-quotes-for-2011-4-728.jpg?cb=1294126271";
 */
 // 1秒ごとに実行
-window.setInterval(function() {
+var intervalId = window.setInterval(function() {
 /*
 $('#slide').attr("src", test);
 */
 	//スライドの更新
 	$.ajax({
 		url: endpoint + "/getSlide",
-		success: function(data) {
+		success: function(xml) {
 //			$('#slide').text($('total_like', data).text());//帰ってきたスライドシェアのＵＲＬからスライドをどんと貼る
-			$('#slide').attr("src", data.url);
+//			$('#slide').attr("src", data.url);
+//			var timestamp = new Date().getTime();
+			$('#slide').attr('src', $('url', xml).text());
+//			<img id="slide" width="588" height="420" src="image/vicugna.png" frameborder="0">
+
+
 		},
 		error: function(xhr, status, error) {
 			showError(error.message);
 		}
 	});
 
-}, 4000);
+}, 2000);
 
 // エラー表示関数
 function showError(error) {
