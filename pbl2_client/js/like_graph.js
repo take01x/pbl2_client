@@ -14,6 +14,16 @@ var originDate = getCurrentDate();	// ページロード時刻
 
 var chart = null;
 
+var ie = false;
+
+/**
+ * IE 8 以下は jQuery の読み込みでエラーが出ているので直せない.
+ */
+var agent = window.navigator.userAgent.toLowerCase();
+if(agent.indexOf('msie') != -1 || agent.indexOf('trident/7') != -1) {
+	ie = true;
+}
+
 var intervalId = window.setInterval(function() {
 
 	// ライブラリ読み込み待ち
@@ -148,11 +158,20 @@ function addDate(date, offset, type) {
 }
 
 
+
 function newDate(str) {
-	var d = new Date(str);
+	var dstr = str;
+	if(ie && typeof dstr == 'string') {
+		var temp = str.toString().replace(/-/g, '/');
+		var temp2 = temp.replace(/T/g, ' ');
+		var temp3 = temp2.split('.');
+		dstr = temp3[0];
+	}
+	var d = new Date(dstr);
 	d.setMilliseconds(0);
 	return d;
 }
+
 
 /**
  *	比較しやすいように ms の情報は落とす
